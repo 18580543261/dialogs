@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@drawable/corner_white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--头部：图片和版本号-->
+            <LinearLayout
+                android:id="@+id/head"
+                android:orientation="horizontal"
+                android:background="@color/updateTheme"
+                android:layout_width="match_parent"
+                android:layout_height="80dp">
+
+                <ImageView
+                    android:src="@mipmap/logo"
+                    android:layout_marginLeft="30dp"
+                    android:layout_gravity="center"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"/>
+
+                <TextView
+                    android:id="@+id/update_version"
+                    android:text="发现新版本\nv1.0.5"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <!--中部：更新内容-->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="更新内容："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="16dp">
+                    <TextView
+                        android:id="@+id/update_log"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:lineSpacingExtra="5dp"
+                        android:text="1.优化了啥啥啥\n2.改变了啥啥啥\n3.去掉了啥啥啥\n3.去掉了啥啥啥\n3.去掉了啥啥啥\n3.去掉了啥啥啥\n3.去掉了啥啥啥\n"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+                </ScrollView>
+            </LinearLayout>
+
+            <!--底部：更新按钮及提示-->
+            <LinearLayout
+                android:id="@+id/foot"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/update_compel_true"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="不更新无法使用APP, 是否立即更新 ?"
+                        android:textColor="@color/updateTheme"
+                        android:textSize="14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/update_compel_false"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <CheckBox
+                        android:id="@+id/update_compel_false_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="七天之内不再提醒"
+                        android:textColor="@color/black"
+                        android:theme="@style/MyCheckBox"
+                        android:textSize="12sp"
+                        />
+                </LinearLayout>
+                
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:layout_gravity="center">
+                    <Button
+                        android:id="@+id/update_button"
+                        android:textColor="@color/white"
+                        android:layout_width="200dp"
+                        android:layout_height="30dp"
+                        android:text="立即更新"
+                        android:background="@drawable/selector_green_grey"/>
+                    <Button
+                        android:id="@+id/install_button"
+                        android:textColor="@color/white"
+                        android:layout_width="200dp"
+                        android:layout_height="30dp"
+                        android:text="立即安装"
+                        android:background="@drawable/selector_green_grey"/>
+                    <ProgressBar
+                        android:id="@+id/update_progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:max="100"
+                        android:progress="30"
+                        android:progressDrawable="@drawable/seekbar_bar"
+                        android:layout_width="200dp"
+                        android:layout_height="15dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/update_wifi"
+                    android:layout_marginBottom="10dp"
+                    android:text="温馨提示：当前为WLAN连接，无需流量立即安装"
+                    android:textColor="#A0A0A0"
+                    android:textSize="12sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cancel"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/update_cancel"
+                android:layout_gravity="center"
+                android:src="@mipmap/cancel"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+        </LinearLayout>
+
+
+
+</LinearLayout>

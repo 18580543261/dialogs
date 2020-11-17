@@ -1,0 +1,9 @@
+
+<resources>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/lighterblack</item>
+        <item name="colorControlActivated">@color/updateTheme</item>
+    </style>
+
+</resources>

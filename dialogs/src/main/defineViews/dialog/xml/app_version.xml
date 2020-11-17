@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="version"></string>
+    <string name="url"></string>
+    <string name="updateLog"></string>
+    <string name="updateBy"></string>
+    <string name="updateTime"></string>
+    <string name="isCompel"></string>
+    <string name="isNextTip"></string>
+    <string name="nextTipTime"></string>
+    <string name="apkPath"></string>
+</resources>
