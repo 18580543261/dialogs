@@ -142,7 +142,7 @@
                         android:id="@+id/update_progress_bar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:max="100"
-                        android:progress="30"
+                        android:progress="0"
                         android:progressDrawable="@drawable/seekbar_bar"
                         android:layout_width="200dp"
                         android:layout_height="15dp"/>
