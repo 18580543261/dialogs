@@ -1,5 +1,9 @@
 package com.sramar.netRequest;
 
+import android.util.Log;
+
+import java.io.File;
+
 public class TaskInfo {
     private String nameTmp;//文件名
     private String name;//文件名
@@ -34,6 +38,15 @@ public class TaskInfo {
 
     public void setNameTmp(String nameTmp) {
         this.nameTmp = nameTmp;
+        File file = new File(dir+"/"+nameTmp);
+        if (file.exists()){
+            int size = (int) file.length();
+            byte b[] = new byte[size];
+            setCompletedLen(b.length);
+            Log.e("momo","TaskInfo: setNameTmp: "+getCompletedLen());
+        }else {
+
+        }
     }
 
     public String getDir() {
@@ -73,6 +86,7 @@ public class TaskInfo {
 
     public void setContentLen(long contentLen) {
         this.contentLen = contentLen;
+        Log.e("momo","TaskInfo: setContentLen: "+contentLen);
     }
 
     public long getCompletedLen() {

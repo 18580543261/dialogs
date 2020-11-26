@@ -44,17 +44,16 @@ public class DownloadRunnable implements Runnable {
             //实例化RandomAccessFile，rwd模式
             raf = new RandomAccessFile(file, "rwd");
             conn = (HttpURLConnection) new URL(info.getUrl()).openConnection();
+            conn.setRequestProperty("Range", "bytes=" + info.getCompletedLen() + "-" );
+            if (info.getContentLen() == 0) {//如果文件长度为0，说明是新任务需要从头下载
+                //获取文件长度
+                info.setContentLen(Long.parseLong(conn.getHeaderField("content-length"))+info.getCompletedLen());
+            }
             conn.setConnectTimeout(120000);//连接超时时间
             conn.setReadTimeout(120000);//读取超时时间
             conn.setRequestMethod("GET");//请求类型为GET
-            if (info.getContentLen() == 0) {//如果文件长度为0，说明是新任务需要从头下载
-                //获取文件长度
-                info.setContentLen(Long.parseLong(conn.getHeaderField("content-length")));
-            } else {//否则设置请求属性，请求制定范围的文件流
-                conn.setRequestProperty("Range", "bytes=" + info.getCompletedLen() + "-" + info.getContentLen());
-            }
             raf.seek(info.getCompletedLen());//移动RandomAccessFile写入位置，从上次完成的位置开始
-            conn.connect();//连接
+//            conn.connect();//连接
             bis = new BufferedInputStream(conn.getInputStream());//获取输入流并且包装为缓冲流
             //从流读取字节数组到缓冲区
             while (!isStop && -1 != (len = bis.read(buffer))) {

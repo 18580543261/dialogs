@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Display;
@@ -37,6 +38,7 @@ public class MDialogUpdate extends Dialog {
     Activity activity;
     String updateFileDir ;
     String apkName = "";
+    String apkNameTemp = "";
 
     boolean isCompel;
     String updateVersion;
@@ -50,6 +52,9 @@ public class MDialogUpdate extends Dialog {
     SharedPreferences.Editor edit;
 
     Button btn_update,btn_install;
+    ProgressBar update_progress_bar = null;
+
+    boolean isWifiAuto = false;
 
     private MDialogUpdate(@NonNull Activity activity) {
         super(activity);
@@ -59,7 +64,9 @@ public class MDialogUpdate extends Dialog {
 
         this.activity = activity;
         updateFileDir = activity.getExternalFilesDir(null) + "/newVersion/";
-        apkName = "circle_"+sp.getString("version","1.0.0")+"_"+sp.getString("updateTime",new Date().getTime()+"")+".apk";
+        String pre = "circle_"+sp.getString("version","1.0.0")+"_"+sp.getString("updateTime",new Date().getTime()+"");
+        apkName = pre+".apk";
+        apkNameTemp= pre+".tmp";
         File file = new File(updateFileDir);
         if (!file.exists()){
             file.mkdirs();
@@ -69,6 +76,12 @@ public class MDialogUpdate extends Dialog {
     @Override
     public void dismiss() {
         super.dismiss();
+    }
+
+    public MDialogUpdate(boolean isWifiAuto,@NonNull Activity activity, String version, String url, String updateLog, String updateBy, String updateTime, boolean is_Compel_update, OnDismissListener dismissListener){
+        this(activity, version, url, updateLog, updateBy, updateTime, is_Compel_update, dismissListener);
+        this.isWifiAuto = isWifiAuto;
+
     }
 
     public MDialogUpdate(@NonNull Activity activity, String version, String url, String updateLog, String updateBy, String updateTime, boolean is_Compel_update, OnDismissListener dismissListener){
@@ -87,10 +100,36 @@ public class MDialogUpdate extends Dialog {
         setCompel(sp.getBoolean("isCompel",false));
         setUpdateVersion("发现新版本\nV"+sp.getString("version","1.0.0"));
         setUpdateLog(sp.getString("updateLog","1.修复问题"));
-        if (!sp.getBoolean("isNextTip",true)){
+        if (!sp.getBoolean("isNextTip",true) && !isCompel){
             if (new Date().getTime() < sp.getLong("nextTipTime",new Date().getTime())){
                 Log.e("momo","MDialogUpdate: setContent: 不再显示");
                 setControl();
+                if (!isApkRepared()){
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            Log.e("momo","MDialogUpdate: run: 开始下载");
+                            final TaskInfo taskInfo = new TaskInfo();
+                            taskInfo.setDir(updateFileDir);
+                            taskInfo.setNameTmp(apkNameTemp);
+                            taskInfo.setName(apkName);
+                            taskInfo.setUrl(sp.getString("url", "http://baid.con"));
+                            taskInfo.setProgressListener(new TaskInfo.OnProgressListener() {
+                                @Override
+                                public void onProgress(final long total, final long completed) {
+                                    if (total == completed) {
+                                        FileRenameUtil.renameFile(taskInfo.getPathTmp(), taskInfo.getPath());
+                                        edit.putString("apkPath", taskInfo.getPath());
+                                        edit.commit();
+                                    }
+                                }
+                            });
+                            DownloadRunnable runnable = new DownloadRunnable(taskInfo);
+                            new Thread(runnable).start();
+                        }
+                    }.start();
+                }
+
                 cancel();
                 return;
             }
@@ -146,7 +185,7 @@ public class MDialogUpdate extends Dialog {
         btn_update = findViewById(R.id.update_button);
         btn_install = findViewById(R.id.install_button);
         btn_install.setVisibility(View.GONE);
-        final ProgressBar update_progress_bar = findViewById(R.id.update_progress_bar);
+        update_progress_bar = findViewById(R.id.update_progress_bar);
         update_progress_bar.setVisibility(View.GONE);
 
         ly_compel_true.setVisibility(isCompel?View.VISIBLE:View.GONE);
@@ -166,9 +205,9 @@ public class MDialogUpdate extends Dialog {
                     btn_update.setVisibility(View.GONE);
                     update_progress_bar.setVisibility(View.VISIBLE);
                     final TaskInfo taskInfo = new TaskInfo();
-                    taskInfo.setNameTmp("apk.tmp");
-                    taskInfo.setName(apkName);
                     taskInfo.setDir(updateFileDir);
+                    taskInfo.setNameTmp(apkNameTemp);
+                    taskInfo.setName(apkName);
                     taskInfo.setUrl(sp.getString("url", "http://baid.con"));
                     taskInfo.setProgressListener(new TaskInfo.OnProgressListener() {
                         @Override
@@ -295,7 +334,9 @@ public class MDialogUpdate extends Dialog {
         edit.putBoolean("isCompel", is_Compel_update);
         edit.commit();
 
-        apkName = "circle_"+sp.getString("version","1.0.0")+"_"+sp.getString("updateTime",new Date().getTime()+"")+".apk";
+        String pre= "circle_"+sp.getString("version","1.0.0")+"_"+sp.getString("updateTime",new Date().getTime()+"");
+        apkName = pre+".apk";
+        apkNameTemp= pre+".tmp";
     }
     private void setIsNextTip(boolean isNextTip){
 
@@ -312,6 +353,19 @@ public class MDialogUpdate extends Dialog {
         }else {
             btn_install.setVisibility(View.GONE);
             btn_update.setVisibility(View.VISIBLE);
+
+            if (isWifiAuto){
+                if (isWifiCon(activity)){
+                    Log.e("momo","MDialogUpdate: checkVersion: wifi自动下载");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            btn_update.performClick();
+                        }
+                    },200);
+                }
+            }
+
         }
     }
     public boolean isApkRepared() {
