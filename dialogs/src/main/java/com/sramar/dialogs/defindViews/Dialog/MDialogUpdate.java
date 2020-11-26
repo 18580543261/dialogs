@@ -99,7 +99,9 @@ public class MDialogUpdate extends Dialog {
 
         setCompel(sp.getBoolean("isCompel",false));
         setUpdateVersion("发现新版本\nV"+sp.getString("version","1.0.0"));
-        setUpdateLog(sp.getString("updateLog","1.修复问题"));
+        String uplog = sp.getString("updateLog","1.修复问题");
+        uplog = uplog.replace("\\n","\n");
+        setUpdateLog(uplog);
         if (!sp.getBoolean("isNextTip",true) && !isCompel){
             if (new Date().getTime() < sp.getLong("nextTipTime",new Date().getTime())){
                 Log.e("momo","MDialogUpdate: setContent: 不再显示");
