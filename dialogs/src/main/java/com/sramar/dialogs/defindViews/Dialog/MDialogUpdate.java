@@ -102,7 +102,7 @@ public class MDialogUpdate extends Dialog {
         String uplog = sp.getString("updateLog","1.修复问题");
         uplog = uplog.replace("\\n","\n");
         setUpdateLog(uplog);
-        if (!sp.getBoolean("isNextTip",true) && !isCompel){
+        if (!sp.getBoolean("isNextTip",true) && !isCompel){//不是强制更新，而且7天内不显示的话
             if (new Date().getTime() < sp.getLong("nextTipTime",new Date().getTime())){
                 Log.e("momo","MDialogUpdate: setContent: 不再显示");
                 setControl();
@@ -133,6 +133,9 @@ public class MDialogUpdate extends Dialog {
                 }
 
                 cancel();
+                if(dismissListener != null){
+                    dismissListener.onDismiss(this);
+                }
                 return;
             }
         }
